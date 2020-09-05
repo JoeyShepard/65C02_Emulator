@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>65C02 Emulator</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	
+	<body>
+		<div id="content_div"></div>
+		
+		<script type="text/javascript" src="interface6502.js"></script>
+		<script>
+		
+		
+		
+			//*************************
+			//*DIFFERENT FOR EACH PAGE*
+			//*************************
+			
+			//title of the page
+			document.title="6502 Emulator";
+			
+			//title at top of document
+			doc_title="Generic emulator";
+			
+			//path to hex, listing, and keys file,
+			path="";
+			
+			//caption for "Calculator information" option
+			legend_caption="Emulator information";
+			legend2_caption="NA";
+			
+			//which page to load for information
+			legend_page=path+"legend.html";
+			legend2_page=path+"NA";
+			
+			//options activated on the page
+			visible_items=[
+			"legend",
+			//"legend2",
+			"system",
+			//"stack",
+			"memory",
+			"cycles",
+			//"none",
+			""
+			];
+			
+			//which option to activate first
+			start_option="legend";
+			
+			//listing style
+			//listing_type="Generic";
+			//listing_type="Kowalski";
+			//listing_type="CA65";
+			listing_type="AS";
+			
+			//******************************
+			//*NO NEED TO MODIFY BELOW HERE*
+			//******************************
+			
+			LoadPages();
+			
+		</script>
+		
+	</body>
+</html>
+
+
+	
+	
+	

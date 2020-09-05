@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="/style.css">
+	</head>
+	
+	<body>
+		<h2 style="margin-top:5px"><center>Emulator</center></span></h2>
+		
+		<!--
+		
+		<p>
+			This is a 65C02 emulator created to test firmware for a calculator project. It's running EhBASIC 2.22 here and passes Klaus Dormann's <a href="https://github.com/Klaus2m5/6502_65C02_functional_tests">6502 and 65C02 functional tests</a>, with the exception of interrupts. The hex file running in the emulator was assembled with the Kowalski simulator. Chrome is recommended as it seems to run this page much faster than other browsers.
+		</p>
+		
+		<p>
+			Press System information above to see registers, memory, and an assembly listing while single stepping. The listing there is a stripped down version of the file output by the Kowalski simulator. By default, the lower two panes jump to show the location of the program counter and memory accesses (labeled CA for calculated address). The program can output text to the debug window through a couple peripheral addresses. Bold, italics, and a few colors are supported with escape codes.
+		</p>
+		<p>
+			Memory is divided into four banks:
+		</p>
+		
+		<p style="font-family: lucida console;font-size: 14px;padding:0px 16px 0px">
+			0x0000-0x01FF No banking<br>
+			0x0200-0x3FFF Bank 1<br>
+			0x4000-0x7FFF Bank 2<br>
+			0x8000-0xBFFF Bank 3<br>
+			0xC000-0xFFFF Bank 4
+		</p>
+		
+		<p>
+			Video memory (256x128) is mapped one byte per pixel and takes up the 32k from 0x10000 to 0x17FFFF. Each byte has two bits each of red, green, and blue. Valid color codes are 0-63. EhBASIC uses the first 64k of memory. Banking only changes here to access video memory in the routine that outputs characters to the screen. Peripherals are mapped starting at 0xFFE0:
+		</p>
+		
+		<p style="font-family: lucida console;font-size: 14px;padding:0px 16px 0px">
+			0xFFE0 Bank 1 pointer<br>
+			0xFFE1 Bank 2 pointer<br>
+			0xFFE2 Bank 3 pointer<br>
+			0xFFE3 Bank 4 pointer<br>
+			0xFFE4 Non-blocking keyboard input<br>
+			0xFFE5 Counter. Updates 250 times per second<br>
+			0xFFE6 Counter. Updates once per second<br>
+			0xFFE7 Output to debug window<br>
+			0xFFE8 Hex output to debug window<br>
+			0xFFE9 Decimal output to debug window<br>
+			0xFFEA 16 bit decimal output to debug window<br>
+			0xFFEB Debug counter for measuring cycles<br>
+			0xFFEC Turn instruction logging on<br>
+			0xFFED Turn instruction logging off<br>
+		    0xFFEE Send instruction log file
+		</p>
+		
+		<p>
+			You can use PEEK and POKE to access some of these addresses like the debug output. The foreground color is stored at 0xEB26 and can be changed with <code><b>POKE $EB26,R+G*4+B*16</b></code> for example.
+		</p>
+		
+		<center><h2>EhBASIC</h2></center>
+		
+		<p>
+			The emulator is running EhBASIC 2.22. You can download a version <a href="https://github.com/Klaus2m5/6502_EhBASIC_V2.22">here</a>. The basic.asm file there is running here unmodified. min_mon.asm has added code to set up the emulated system and a few pointers in zero page. There are also input and output routines and a file with character data. You can download those source files here:<br>
+			<a href="min_mon.asm">modified min_mon.asm</a><br>
+			<a href="simIO.65s">simulator IO functions</a><br>
+			<a href="CharTable.65s">character data</a><br><br>
+			This project is derived from EhBASIC, which the readme requests I mention.
+		</p>
+		
+		-->
+		
+	</body>
+</html>
+
+		

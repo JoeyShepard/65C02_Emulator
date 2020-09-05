@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			table, th, td
+			{
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+		</style>
+		<link rel="stylesheet" href="style.css">
+	</head>
+
+	<body>
+		<div class="left_menu">
+			<object id="side_obj" type="text/html" data="sidebar.html" width="120px" height="350px">
+			</object>
+		</div>
+		
+		<div class="emu_content">
+			<center>
+			<h1><span id="main_title">Title here</span></h1><br>
+			<table id="tableMain" style="border-collapse:collapse;">
+				<tr>
+					<td valign="top" style="position:relative;">
+						<div style="margin:10px">
+							<center><b>6502 Calculator Emulator</b><br>
+							Press Run to start</center>
+							<form name="formModes">
+								<br hidden id="br_legend">
+								<input hidden id="radio_legend" type="radio" name="radioMode" onclick="radioHandler(this);" value="legend">
+								<span hidden id="lbl_legend"> Calculator information</span>
+								
+								<br hidden id="br_legend2">
+								<input hidden id="radio_legend2" type="radio" name="radioMode" onclick="radioHandler(this);" value="legend2">
+								<span hidden id="lbl_legend2"> Emulator information</span>
+								
+								<br hidden id="br_system">
+								<input hidden id="radio_system" type="radio" name="radioMode" onclick="radioHandler(this);" value="system">
+								<span hidden id="lbl_system"> System information<br></span>
+								
+								<br hidden id="br_memory">
+								<input hidden id="radio_memory" type="radio" name="radioMode" onclick="radioHandler(this);" value="memory">
+								<span hidden id="lbl_memory"> Memory viewer<br></span>
+								
+								<br hidden id="br_cycles">
+								<input hidden id="radio_cycles" type="radio" name="radioMode" onclick="radioHandler(this);" value="cycles">
+								<span hidden id="lbl_cycles"> Cycle log<br></span>
+								
+								<br hidden id="br_none">
+								<input hidden id="radio_none" type="radio" name="radioMode" onclick="radioHandler(this);" value="none">
+								<span hidden id="lbl_none"> None</span>
+							</form>
+						</div>
+						<div style="position:absolute;bottom:0;left:0;margin:5px;">
+							<span id="lblstatus">Status: waiting...</span><br>
+							<span  id="lblspeed">Speed: (stopped)</span><br>
+							<button onclick="step()" style="display:inline-block;">Step</button>
+							<button onclick="run()" style="display:inline-block;">Run</button>
+							<button onclick="stop()" style="display:inline-block;">Stop</button>
+							<button onclick="reset()" style="display:inline-block;">Reset</button>
+						</div>
+					</td>
+					<td>
+						<canvas id="picScreen" width="512" height="256"></canvas>
+					</td>
+				</tr>	
+			</table>
+			</center>
+			<br>
+			
+			<center>
+			<div id="tableLegend" style="padding: 8px 16px 16px;border: 1px solid black;margin-bottom:12px;" align="left"></div>
+			
+			<center>
+			<div id="tableLegend2" style="padding: 8px 16px 16px;border: 1px solid black;margin-bottom:12px;" align="left"></div>
+			
+			<table hidden id="tableDebug">
+				<tr>
+					<td>
+						<!--<div id="divDebug" style="font-family:lucida console;font-size:14px;height:100px;overflow-y:auto;"> -->
+						<div id="divDebug" style="font-family:lucida console;font-size:14px;height:100px;overflow:auto;">
+						<span></span>
+						</div>
+					</td>
+				</tr>
+			</table>
+			</center>
+			
+			<center>
+			<table hidden id="tableMemory" style="margin-bottom:12px;">
+				<tr>
+					<td>
+						<center>
+						<b>Memory viewer</b><br>
+						<button onclick="w.postMessage({cmd:'memory viewer'});" style="display:inline-block;">Refresh</button>
+						<button onclick="copyToClipboard(mem_contents);" style="display:inline-block;">Copy</button>
+						</center>
+						<center>
+						<a href="#bank0">0</a> <a href="#bank1">1</a> <a href="#bank2">2</a>
+						<a href="#bank3">3</a> <a href="#bank4">4</a> <a href="#bank5">5</a>
+						<a href="#bank6">6</a> <a href="#bank7">7</a> <a href="#bank8">8</a>
+						<a href="#bank9">9</a> <a href="#bank10">A</a> <a href="#bank11">B</a>
+						<a href="#bank12">C</a> <a href="#bank13">D</a> <a href="#bank14">E</a>
+						<a href="#bank15">F</a>
+						</center>
+						<br>
+						<span style="font-family:lucida console;font-size:12px;">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF | 0 1 2 3 4 5 6 7 8 9 A B C D E F<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;================================================|================================<br>
+						</span>
+						<div id="divMemory" style="font-family:lucida console;font-size:12px;height:400px;overflow-y:auto;">
+							<span></span>
+						</div>
+					</td>
+				</tr>
+			</table>
+			</center>
+			
+			<center>
+			<table hidden id="tableCycles" style="margin-bottom:12px;">
+				<tr>
+					<td>
+						<center>
+						<b>Cycle log</b><br>
+						<button onclick="w.postMessage({cmd:'cycle table'});" style="display:inline-block;">Refresh</button>
+						<button onclick="copyToClipboard(cycle_log);" style="display:inline-block;">Copy</button>
+						<button onclick="w.postMessage({cmd:'cycle log on'});;" style="display:inline-block;">Activate</button>
+						</center>
+						<br>
+						<div id="divCycles" style="font-family:lucida console;font-size:14px;height:400px;overflow-y:auto;">
+							<span></span>
+						</div>
+					</td>
+				</tr>
+			</table>
+			</center>
+			
+			<center>
+			<table hidden id="tableSystem" style="align:center;margin-bottom:12px;">
+				<tr>
+					<td valign="top">
+						<br>
+						<span id="lbldebug" style="padding: 0px 12px 0px"></span>
+						<button onclick="w.postMessage({cmd:'reset cycles'});w.postMessage({cmd:'update'});" style="padding 0px 12px 0px;">Reset cycles</button>
+						<!-- Fails in Chrome!
+						<button onclick="w.postMessage({cmd:'memory dump'});" style="padding 0px 12px 0px;">Dump memory</button>
+						-->
+						<table style="border: none;">
+							<tr>
+								<td style="border: none;" width="120px" valign="top">
+									<p id="lblRegs" style="padding: 0px 12px 0px"></p>
+								</td>
+								<td style="border: none;" valign="top">
+									<p id="lblBanks" style="padding: 0px 12px 0px"></p>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td valign="top">
+						<center><b>Zero page</b></center>
+						<p id="lblZP" style="font-family:lucida console;font-size:11px;"></p>
+					</td>
+					<td valign="top">
+						<center><b>Stack</b></center>
+						<p id="lblStack" style="font-family:lucida console;font-size:11px;"></p>
+					</td>
+				</tr>
+				<tr id="bottom_row">
+					<td valign="top">
+						<div id="divlisting" style="overflow: auto;white-space: nowrap;width:200px;">
+							<p id="txtlisting" style="font-family:lucida console;font-size:11px;"></p>
+						</div>
+					</td>
+					<td valign="top">
+						<center>
+						<span id="lblLeftMemTitle"><b>0xC000</b></span>
+						<select id="selLeftMem" onchange="selLeftHandler()"></select>
+						<input type="checkbox" id="selLeftPC" checked
+							onclick="memLeft = document.getElementById('selLeftMem').selectedIndex*0x100;w.postMessage({cmd:'update'});">PC
+						</center>
+						<p id="lblLeftMem" style="font-family:lucida console;font-size:11px;"></p>
+					</td>
+					<td valign="top">
+						<center>
+						<span id="lblRightMemTitle"><b>0xFF00</b></span>
+						<select id="selRightMem" onchange="selRightHandler()"></select>
+						<input type="checkbox" id="selRightPC" checked
+							onclick="memRight = document.getElementById('selRightMem').selectedIndex*0x100;w.postMessage({cmd:'update'});">CA
+						</center>
+						<p id="lblRightMem" style="font-family:lucida console;font-size:11px;"></p>
+					</td>
+				</tr>
+			</table>
+			</center>
+		</div>
+	</body>
+</html>
