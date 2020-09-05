@@ -1185,6 +1185,8 @@ function subSBC(oper)
 			FlagC=1;
 		}
 		else FlagC=0;
+		//May happen if oper is not valid BCD
+		if (t1<0) t1=0;
 		cycle_count++;
 	}
 	else
