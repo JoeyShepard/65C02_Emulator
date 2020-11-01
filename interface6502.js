@@ -988,9 +988,12 @@ function LoadPages()
 
 function setup(hexPath,listing_type)
 {
+	//Worker
+	w = new Worker("emu6502.js");
+	w.addEventListener('message', OnMessage, false);
+	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type});
+	
 	//Interface
-	document.getElementById("radio_"+start_option).checked=true;
-	radioHandler({value:start_option});
 	lbl_legend.innerHTML=legend_caption;
 	lbl_legend2.innerHTML=legend2_caption;
 	main_title.innerHTML=doc_title;
@@ -1004,11 +1007,6 @@ function setup(hexPath,listing_type)
 		}
 	}
 
-	//Worker
-	w = new Worker("emu6502.js");
-	w.addEventListener('message', OnMessage, false);
-	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type});
-	
 	//Screen
 	canvas = document.getElementById('picScreen');
 	canvasWidth  = canvas.width;
@@ -1052,5 +1050,9 @@ function setup(hexPath,listing_type)
 	//radioHandler(document.formModes.radioMode);
 
 	//alert(document.getElementById("obj_height").offsetTop);
+	
+	//Switch to startup pane after everything is populated
+	document.getElementById("radio_"+start_option).checked=true;
+	radioHandler(document.formModes.radioMode);
 	
 }
