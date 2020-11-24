@@ -133,6 +133,8 @@ var canvasHeight;
 var ctx;
 //Key buffer
 var keyBuffer=[];
+//File input buffer
+var inputBuffer=[];
 //Memory pane address
 memLeft=0xC000;
 memRight=0xFF00;
@@ -897,6 +899,7 @@ function run()
 	if ((ready==2)&&(running==0))
 	{
 		keyBuffer=[];
+		inputBuffer=[];
 		w.postMessage({cmd:'run'});
 		cycle_offset=cycle_temp;
 		//cycle_int_id=setInterval(function(){w.postMessage({cmd:'cycles'});},1000);

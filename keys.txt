@@ -2,5 +2,3 @@
 : BAR 2e5 FOO ;
 : BAZ 10e3 BAR ;
 BAZ
-
-

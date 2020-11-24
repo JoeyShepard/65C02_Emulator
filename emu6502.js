@@ -53,6 +53,7 @@ const LOG_ON =			0xFFEC; //Turn instruction logging on
 const LOG_OFF = 		0xFFED; //Turn instruction logging off
 const LOG_SEND =		0xFFEE; //Send instruction log file
 const BELL_SOUND =		0xFFEF; //Play bell sound on printing character 7
+const FILE_INPUT =		0xFFF0; //Play bell sound on printing character 7
 
 //Commands for DEBUG_TIMING peripheral
 const TIMING_INSTR_BEGIN =	1
@@ -100,7 +101,9 @@ var RomBank=BANK_SIZE*3;	//Point to 0xC000-0xFFFF on startup
 //Variant 3							67mhz
 //var mem=new Array(0x40000);
 //Variant 4							69mhz (65mhz with banking)
-var mem=new Array(0x40000).fill(0);	
+//var mem=new Array(0x40000).fill(0);	
+//Variant 5
+var mem=new Uint8Array(0x40000);
 var running=0;
 var cycle_count=0;
 var cycle_penalty=0;
@@ -110,6 +113,7 @@ var CalcBanked=-1;
 var debugflag;
 var ScreenDirty;
 var keyBuffer=[];
+var inputBuffer=[];
 var debugBuffer=[];
 var timingEcho=true;
 var timingCycles=0;
@@ -623,69 +627,80 @@ function setup(path,list_style)
 				return response.text().then(function(text)
 				{
 					keyBuffer=keyBuffer.concat(text.split('').map(x => x.charCodeAt(0)));
-				
-					self.postMessage({cmd:"status",msg:"loading hex"});
-					var myRequest = new Request(path+'prog.hex');
+					
+					self.postMessage({cmd:"status",msg:"loading input"});
+					var myRequest = new Request(path+'input.txt');
 					fetch(myRequest).then(function(response)
 					{
+						
 						return response.text().then(function(text)
 						{
-							//self.postMessage({cmd:"status",msg:"raw hex loaded (" + ((text.length)/1024).toFixed(1) + "k)"});
-							self.postMessage({cmd:"status",msg:"raw hex loaded"});
-							var lines = text.split("\n");
-							for (i=0;i<lines.length;i++)
+							inputBuffer=inputBuffer.concat(text.split('').map(x => x.charCodeAt(0)));
+						
+							self.postMessage({cmd:"status",msg:"loading hex"});
+							var myRequest = new Request(path+'prog.hex');
+							fetch(myRequest).then(function(response)
 							{
-								if (lines[i].length!=0)
+								return response.text().then(function(text)
 								{
-									if (lines[i][0]!=':')
+									//self.postMessage({cmd:"status",msg:"raw hex loaded (" + ((text.length)/1024).toFixed(1) + "k)"});
+									self.postMessage({cmd:"status",msg:"raw hex loaded"});
+									var lines = text.split("\n");
+									for (i=0;i<lines.length;i++)
 									{
-										self.postMessage({cmd:"error",msg:"corrupt hex file!"});
-										return;
-									}
-									
-									if ((HexCharToInt(lines[i][7])+HexCharToInt(lines[i][8])*0x10)==0)
-									{
-										//Line of data
-										record_bytes=HexCharToInt(lines[i][1])*16+HexCharToInt(lines[i][2]);
-										record_address=HexCharToInt(lines[i][3])*0x1000;
-										record_address+=HexCharToInt(lines[i][4])*0x100;
-										record_address+=HexCharToInt(lines[i][5])*0x10;
-										record_address+=HexCharToInt(lines[i][6])*0x1;
-										for (j=0;j<record_bytes;j++)
+										if (lines[i].length!=0)
 										{
-											mem[record_address+record_hi_address+j]=HexCharToInt(lines[i][9+j*2])*16+
-												HexCharToInt(lines[i][10+j*2]);
-											bytes_written++;
+											if (lines[i][0]!=':')
+											{
+												self.postMessage({cmd:"error",msg:"corrupt hex file!"});
+												return;
+											}
+											
+											if ((HexCharToInt(lines[i][7])+HexCharToInt(lines[i][8])*0x10)==0)
+											{
+												//Line of data
+												record_bytes=HexCharToInt(lines[i][1])*16+HexCharToInt(lines[i][2]);
+												record_address=HexCharToInt(lines[i][3])*0x1000;
+												record_address+=HexCharToInt(lines[i][4])*0x100;
+												record_address+=HexCharToInt(lines[i][5])*0x10;
+												record_address+=HexCharToInt(lines[i][6])*0x1;
+												for (j=0;j<record_bytes;j++)
+												{
+													mem[record_address+record_hi_address+j]=HexCharToInt(lines[i][9+j*2])*16+
+														HexCharToInt(lines[i][10+j*2]);
+													bytes_written++;
+												}
+											}
+											else if ((HexCharToInt(lines[i][7])*0x10+HexCharToInt(lines[i][8]))==1)
+											{
+												//End of file record
+												//Nothing should come after this. (Check?)
+											}
+											else if ((HexCharToInt(lines[i][7])*0x10+HexCharToInt(lines[i][8]))==4)
+											{
+												//Sets top 16 bits of 32 bit address
+												record_hi_address=HexCharToInt(lines[i][9])*0x1000;
+												record_hi_address+=HexCharToInt(lines[i][10])*0x100;
+												record_hi_address+=HexCharToInt(lines[i][11])*0x10;
+												record_hi_address+=HexCharToInt(lines[i][12])*0x1;
+												record_hi_address<<=16;
+											}
+											
+											else
+											{
+												self.postMessage({cmd:"msgbox",msg:"Unknown record type "+HexCharToInt(lines[i][7])+HexCharToInt(lines[i][8])+" in line: "+lines[i]});
+											}
 										}
 									}
-									else if ((HexCharToInt(lines[i][7])*0x10+HexCharToInt(lines[i][8]))==1)
-									{
-										//End of file record
-										//Nothing should come after this. (Check?)
-									}
-									else if ((HexCharToInt(lines[i][7])*0x10+HexCharToInt(lines[i][8]))==4)
-									{
-										//Sets top 16 bits of 32 bit address
-										record_hi_address=HexCharToInt(lines[i][9])*0x1000;
-										record_hi_address+=HexCharToInt(lines[i][10])*0x100;
-										record_hi_address+=HexCharToInt(lines[i][11])*0x10;
-										record_hi_address+=HexCharToInt(lines[i][12])*0x1;
-										record_hi_address<<=16;
-									}
-									
-									else
-									{
-										self.postMessage({cmd:"msgbox",msg:"Unknown record type "+HexCharToInt(lines[i][7])+HexCharToInt(lines[i][8])+" in line: "+lines[i]});
-									}
-								}
-							}
-							if (bytes_written<1024)
-								self.postMessage({cmd:"status",msg:"hex loaded (" + bytes_written + " bytes)"})
-							else self.postMessage({cmd:"status",msg:"hex loaded (" + ((bytes_written)/1024).toFixed(1) + "k)"})
-							//Set PC to reset vector
-							PC=mem[0xFFFC]+(mem[0xFFFD]<<8);
-
-							self.postMessage({cmd:"ready"});
+									if (bytes_written<1024)
+										self.postMessage({cmd:"status",msg:"hex loaded (" + bytes_written + " bytes)"})
+									else self.postMessage({cmd:"status",msg:"hex loaded (" + ((bytes_written)/1024).toFixed(1) + "k)"})
+									//Set PC to reset vector
+									PC=mem[0xFFFC]+(mem[0xFFFD]<<8);
+		
+									self.postMessage({cmd:"ready"});
+								});
+							});
 						});
 					});
 				});
@@ -878,8 +893,15 @@ function peripheral_read(data)
 				return parseInt((Date.now()%1000)/4);
 				break;
 			case TIMER_S:
-				return parseInt((Date.now()/1000)%255);
+				return parseInt((Date.now()/1000)%256);
 				break;
+			case FILE_INPUT:
+				if (inputBuffer.length==0) return 0;
+				else
+				{
+					const new_byte=inputBuffer.shift();
+					return new_byte;
+				}
 			default:
 				return data;
 				break;
