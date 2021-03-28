@@ -111,6 +111,7 @@ const screenPixelRatio=2;
 //*GLOBAL VARIABLES*
 //******************
 
+//General state
 var ready=0;
 var running=0;
 var start_time=0;
@@ -124,20 +125,26 @@ var gfx_int_id;
 var listing=[];
 var draw_address=[-1,-1,-1];
 var draw_color=['white','#E0E0E0','#C0C0C0','#00FF00'];
+
 //Worker variable
 var w;	
+
 //Canvas drawing variables
 var canvas;
 var canvasWidth;
 var canvasHeight;
 var ctx;
+
 //Key buffer
 var keyBuffer=[];
+
 //File input buffer
 var inputBuffer=[];
+
 //Memory pane address
 memLeft=0xC000;
 memRight=0xFF00;
+
 //Debug buffer output on page
 var debugBufferState="normal";
 var debugString="";
@@ -145,12 +152,16 @@ var debugBold=false;
 var debugItalics=false;
 var debugColor="black";
 var debugRespan=false;
+
 //Audio for beep on bell character 7
 audio=new AudioContext();
+
 //Memory viewer
 mem_contents="";
+
 //Cycle log viewer
 cycle_log="";
+
 //Constants for hardware
 RAM_BANK1=0xFFE0;
 RAM_BANK2=0xFFE1;
@@ -518,7 +529,7 @@ function OnMessage(e)
 			elementMem.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(e.data.memDump));
 			elementMem.setAttribute('download', 'memory dump.txt');
 			elementMem.style.display = 'none';
-			alert(e.data.memDump.length);system
+			//alert(e.data.memDump.length);//system
 			document.body.appendChild(elementMem);
 			elementMem.click();
 			document.body.removeChild(elementMem);			
@@ -994,7 +1005,7 @@ function setup(hexPath,listing_type)
 	//Worker
 	w = new Worker("emu6502.js");
 	w.addEventListener('message', OnMessage, false);
-	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type});
+	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type,NMOS_mode:NMOS_mode});
 	
 	//Interface
 	lbl_legend.innerHTML=legend_caption;

@@ -203,7 +203,7 @@ function OnMessage(e)
 	switch (e.data.cmd)
 	{
 		case 'setup':
-			setup(e.data.path,e.data.listing_type);
+			setup(e.data.path,e.data.listing_type,e.data.NMOS_mode);
 			break;
 		case 'debug':
 			if (debugBuffer.length!=0)
@@ -328,7 +328,7 @@ function debugMsg(msg)
 //*SETUP FUNCTION*
 //****************
 
-function setup(path,list_style)
+function setup(path,list_style,NMOS)
 {
 	//Moved above since needed before receive message for setup
 	//self.addEventListener('message', OnMessage , false);
@@ -344,6 +344,7 @@ function setup(path,list_style)
 	var labellist=[];
 	
 	GraphicsDirty=false;
+	NMOS_mode=NMOS;
 	
 	//Loading listing and hex files
 	self.postMessage({cmd:"status",msg:"loading listing"});
@@ -1524,8 +1525,24 @@ function opROR()													//0x6A
 //function opNOP()													//0x6B
 function opJMP_I()													//0x6C
 {
-	var t0=mem[bank(PC)]+0x100*mem[bank(PC+1)];
-	PC=mem[bank(t0)]+0x100*mem[bank(t0+1)];
+	if ((NMOS_mode)&&(mem[bank(PC)]==0xFF))
+	{
+		//Keep PC on this instruction for debugging
+		PC--;
+		
+		if (running==1)
+		{
+			running=0;
+			self.postMessage({cmd:"stopped"});
+		}
+		
+		self.postMessage({cmd:"msgbox",msg:"Trapped: JMP (xxFF) in NMOS mode!"});
+	}
+	else
+	{
+		var t0=mem[bank(PC)]+0x100*mem[bank(PC+1)];
+		PC=mem[bank(t0)]+0x100*mem[bank(t0+1)];
+	}
 	cycle_count+=6;
 }	
 function opADC_ADDRESS(){subADC(memADDRESS());cycle_count+=4;}		//0x6D
