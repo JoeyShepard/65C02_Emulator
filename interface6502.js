@@ -975,7 +975,7 @@ function LoadPages()
 		xmlHttp.send(null);
 	}
 	
-	xmlStep("interface.html",
+	xmlStep(base_path + "interface.html",
 		function()
 		{
 			//executes after main page loads
@@ -1003,7 +1003,7 @@ function LoadPages()
 function setup(hexPath,listing_type)
 {
 	//Worker
-	w = new Worker("emu6502.js");
+	w = new Worker(base_path+"emu6502.js");
 	w.addEventListener('message', OnMessage, false);
 	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type,NMOS_mode:NMOS_mode});
 	
