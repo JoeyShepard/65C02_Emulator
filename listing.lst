@@ -1,0 +1,26 @@
+dummy 
+dummy 
+dummy 
+      13/    C000 : A9 04               	LDA #BANK_GFX_RAM1
+      14/    C002 : 8D E1 FF            	STA RAM_BANK2
+      15/    C005 : A9 05               	LDA #BANK_GFX_RAM2
+      16/    C007 : 8D E2 FF            	STA RAM_BANK3
+      18/    C00A : A9 40               	LDA #$40
+      19/    C00C : 85 01               	STA ptr_hi
+      20/    C00E : A9 00               	LDA #0
+      21/    C010 : 85 00               	STA ptr_lo
+      23/    C012 : A0 00               	LDY #0
+      24/    C014 :                     	loop1:
+      25/    C014 : A9 30               		LDA #COLOR_BLUE
+      26/    C016 :                     		loop2:
+      27/    C016 : 91 00               			STA (ptr),Y
+      28/    C018 : C8                  			INY
+      29/    C019 : D0 FB               			BNE loop2
+      30/    C01B : A5 01               			LDA ptr_hi
+      31/    C01D : 1A                  			INC
+      32/    C01E : 85 01               			STA ptr_hi
+      33/    C020 : C9 C0               			CMP #$C0
+      34/    C022 : D0 F0               			BNE loop1
+      36/    C024 : 00                  	BRK
+      37/    C025 : 00                  	BRK
+      39/    C026 : 4C 26 C0            	JMP *

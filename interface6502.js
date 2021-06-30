@@ -302,7 +302,7 @@ function OnMessage(e)
 				}
 				
 				var sysShow=document.getElementById("tableSystem").style.display;
-				document.getElementById("tableSystem").style.display="table";
+				document.getElementById("tableSystem").style.display="block";
 				var temp_height=document.getElementById('bottom_row').offsetHeight;
 				document.getElementById("divlisting").style.height=temp_height+'px';
 				document.getElementById("txtlisting").innerHTML=listing_str;
@@ -329,7 +329,7 @@ function OnMessage(e)
 					if (document.getElementById("s"+e.data.PC)!=null)
 						document.getElementById("s"+e.data.PC).style.backgroundColor=draw_color[3];		
 					
-					document.getElementById('divlisting').scrollTop=document.getElementById("s"+e.data.PC).offsetTop-80;
+					document.getElementById('divlisting').scrollTop=document.getElementById("s"+e.data.PC).offsetTop-763;
 				}
 			}
 			break;
@@ -425,6 +425,7 @@ function OnMessage(e)
 					}
 				}
 				document.getElementById('divDebug').innerHTML="<span>"+debugString+"</span>";
+				
 				//document.getElementById('divDebug').scrollTop=document.getElementById('divDebug').scrollHeight-document.getElementById('divDebug').offsetHeight;
 				document.getElementById('divDebug').scrollTop=document.getElementById('divDebug').scrollHeight;
 			}
@@ -724,30 +725,30 @@ function radioHandler(whichRadio)
 	}
 	else if (whichRadio.value=="system")
 	{
-		document.getElementById("tableDebug").style.display="table";
+		document.getElementById("tableDebug").style.display="block";
 		document.getElementById("tableDebug").style.width=
 			document.getElementById("tableMain").offsetWidth+"px";
 		document.getElementById("divDebug").style.width=
 			document.getElementById("tableMain").offsetWidth+"px";	
-		document.getElementById("tableSystem").style.display="table";
+		document.getElementById("tableSystem").style.display="block";
 		//Reset listing window
 		w.postMessage({cmd:'update'});	
 		//Scroll debug window to bottom
 		document.getElementById('divDebug').scrollTop=document.getElementById('divDebug').scrollHeight-document.getElementById('divDebug').offsetHeight;
 	}	
-	else if (whichRadio.value=="stack") document.getElementById("tableStack").style.display="table";
+	else if (whichRadio.value=="stack") document.getElementById("tableStack").style.display="block";
 	else if (whichRadio.value=="memory")
 	{
 		document.getElementById("tableMemory").style.width=
 			document.getElementById("tableMain").offsetWidth+"px";
-		document.getElementById("tableMemory").style.display="table";
+		document.getElementById("tableMemory").style.display="block";
 		w.postMessage({cmd:'memory viewer'});
 	}
 	else if (whichRadio.value=="cycles")
 	{
 		document.getElementById("tableCycles").style.width=
 			document.getElementById("tableMain").offsetWidth+"px";
-		document.getElementById("tableCycles").style.display="table";
+		document.getElementById("tableCycles").style.display="block";
 		w.postMessage({cmd:'cycle table'});
 	}
 	
