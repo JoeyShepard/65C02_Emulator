@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="/style.css">
+		<link rel="stylesheet" href="/css/simulator.css">
 	</head>
 	
 	<body>
@@ -21,7 +22,7 @@
 			Memory is divided into four banks:
 		</p>
 		
-		<p style="font-family: lucida console;font-size: 14px;padding:0px 16px 0px">
+		<p class="legend_mono">
 			0x0000-0x01FF No banking<br>
 			0x0200-0x3FFF Bank 1<br>
 			0x4000-0x7FFF Bank 2<br>
@@ -33,7 +34,7 @@
 			Video memory (256x128) is mapped one byte per pixel and takes up the 32k from 0x10000 to 0x17FFFF. Each byte has two bits each of red, green, and blue. Valid color codes are 0-63. EhBASIC uses the first 64k of memory. Banking only changes here to access video memory in the routine that outputs characters to the screen. Peripherals are mapped starting at 0xFFE0:
 		</p>
 		
-		<p style="font-family: lucida console;font-size: 14px;padding:0px 16px 0px">
+		<p class="legend_mono">
 			0xFFE0 Bank 1 pointer<br>
 			0xFFE1 Bank 2 pointer<br>
 			0xFFE2 Bank 3 pointer<br>

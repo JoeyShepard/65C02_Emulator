@@ -2,9 +2,40 @@
 <html>
 	<head>
 		<style>
-			
+			.debug_output {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:16px;
+				height:100px;
+				overflow:auto;
+			}
+			.mem_page {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:11px;
+				white-space:nowrap;
+			}
+			.listing {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:12px;
+			}
+			.mem_view_heading {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:13px;
+			}
+			.mem_view_section {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:13px;
+				height:400px;
+				overflow-y:auto;
+			}
+			.cycle_view_section {
+				font-family:"Lucida Console","Courier New",Courier,monospace;
+				font-size:14px;
+				height:400px;
+				overflow-y:auto;
+			}
 		</style>
 		<link rel="stylesheet" href="/css/emu6502.css">
+		
 	</head>
 
 	<body>
@@ -85,14 +116,14 @@
 					<br>
 					
 					<!--emulator information, for example, entered here-->
-					<div id="tableLegend" style="padding: 8px 16px 16px;border: 1px solid black;margin-bottom: 12px;" align="left"></div>
+					<div id="tableLegend" style="padding:8px 16px 16px;border: 1px solid black;margin-bottom: 12px;" align="left"></div>
 					
 					<div id="tableLegend2" style="padding: 8px 16px 16px;border: 1px solid black;margin-bottom:12px;" align="left"></div>
 					
 					<!--debug information output by emulated program-->
 					<div hidden id="tableDebug" style="margin: 0 auto;border: 1px solid black;">
 						<!--<div id="divDebug" style="font-family:lucida console;font-size:14px;height:100px;overflow-y:auto;"> -->
-						<div id="divDebug" style="font-family:lucida console;font-size:14px;height:100px;overflow:auto;">
+						<div id="divDebug" class="debug_output">
 						<span></span>
 						</div>
 					</div>
@@ -121,18 +152,18 @@
 							</div>
 							<div class="system_block">
 								<center><b>Zero page</b></center>
-								<p id="lblZP" style="font-family:lucida console;font-size:11px;white-space:nowrap;"></p>
+								<p id="lblZP" class="mem_page"></p>
 							</div>
 							<div class="system_block">
 								<center><b>Stack</b></center>
-								<p id="lblStack" style="font-family:lucida console;font-size:11px;white-space:nowrap;"></p>
+								<p id="lblStack" class="mem_page"></p>
 							</div>
 						</div>
 						<!--bottom row-->
 						<div id="bottom_row" style="display:table-row;">
 							<div class="system_block">
 								<div id="divlisting" style="overflow: auto;white-space: nowrap;width:200px;">
-									<p id="txtlisting" style="font-family:lucida console;font-size:11px;"></p>
+									<p id="txtlisting" class="listing">Assembly listing</p>
 								</div>
 							</div>
 							<div class="system_block">
@@ -142,7 +173,7 @@
 								<input type="checkbox" id="selLeftPC" checked
 									onclick="memLeft = document.getElementById('selLeftMem').selectedIndex*0x100;w.postMessage({cmd:'update'});">PC
 								</center>
-								<p id="lblLeftMem" style="font-family:lucida console;font-size:11px;white-space:nowrap;"></p>
+								<p id="lblLeftMem" class="mem_page"></p>
 							</div>
 							<div class="system_block">
 								<center>
@@ -151,7 +182,7 @@
 								<input type="checkbox" id="selRightPC" checked
 									onclick="memRight = document.getElementById('selRightMem').selectedIndex*0x100;w.postMessage({cmd:'update'});">CA
 								</center>
-								<p id="lblRightMem" style="font-family:lucida console;font-size:11px;white-space:nowrap;"></p>
+								<p id="lblRightMem" class="mem_page"></p>
 							</div>
 						</div>
 					</div>
@@ -172,11 +203,11 @@
 							<a href="#bank15">F</a>
 						</div>
 						<br>
-						<span style="font-family:lucida console;font-size:12px;">
+						<span class="mem_view_heading">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF | 0 1 2 3 4 5 6 7 8 9 A B C D E F<br>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;================================================|================================<br>
 						</span>
-						<div id="divMemory" style="font-family:lucida console;font-size:12px;height:400px;overflow-y:auto;">
+						<div id="divMemory" class="mem_view_section">
 							<span></span>
 						</div>
 					</div>
@@ -190,7 +221,7 @@
 							<button onclick="w.postMessage({cmd:'cycle log on'});;" style="display:inline-block;">Activate</button>
 						</div>
 						<br>
-						<div id="divCycles" style="font-family:lucida console;font-size:14px;height:400px;overflow-y:auto;">
+						<div id="divCycles" class="cycle_section">
 							<span></span>
 						</div>
 					</div>

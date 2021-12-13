@@ -1027,7 +1027,7 @@ function setup(hexPath,listing_type)
 	canvasWidth  = canvas.width;
 	canvasHeight = canvas.height;
 	ctx = canvas.getContext('2d');
-	ctx.font = "16px Lucida Console";
+	ctx.font = "16px Courier New";
 	ctx.fillText("<<Press Run to start", 10, 247);
 
 	//Keyhandler
