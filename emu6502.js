@@ -891,10 +891,12 @@ function peripheral_read(data)
 				}
 				break;
 			case TIMER_MS4:
-				return parseInt((Date.now()%1000)/4);
+				//return parseInt((Date.now()%1000)/4);
+				return parseInt((performance.now()%1000)/4);
 				break;
 			case TIMER_S:
-				return parseInt((Date.now()/1000)%256);
+				//return parseInt((Date.now()/1000)%256);
+				return parseInt((performance.now()/1000)%256);
 				break;
 			case FILE_INPUT:
 				if (inputBuffer.length==0) return 0;

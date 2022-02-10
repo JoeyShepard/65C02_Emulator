@@ -31,7 +31,7 @@
 	
 	
 	.ul_mono {
-		font-family:"Lucida Console", Courier, monospace;
+		font-family:"Courier New", Courier, monospace;
 	}
 	.li_spaced {
 		margin-top: 0px;
@@ -90,7 +90,7 @@
 		border-width: 1px;
 		border-color: #C0C0C0;
 		border-radius: 5px;
-		font-family: "Lucida Console", Monaco, monospace;
+		font-family: "Courier New", Courier, monospace;
 		font-size:smaller;
 		line-height: 1.3
 	}
