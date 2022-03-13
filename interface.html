@@ -134,18 +134,33 @@
 						<div style="display:table-row;">
 							<div class="system_block">
 								<br>
+								<!--cycle count-->
 								<span id="lbldebug" style="padding: 0px 12px 0px"></span>
+								<!--reset cycles button-->
 								<button onclick="w.postMessage({cmd:'reset cycles'});w.postMessage({cmd:'update'});" style="padding 0px 12px 0px;">Reset cycles</button>
 								<!-- Fails in Chrome!
 								<button onclick="w.postMessage({cmd:'memory dump'});" style="padding 0px 12px 0px;">Dump memory</button>
 								-->
 								<div style="display:table">
-									<div style="display:table-row">									
-										<div style="display:table-cell;">
-											<p id="lblRegs" style="padding: 0px 12px 0px;white-space:nowrap;"></p>
+									<div style="display:table-row">
+										<!--top row: registers and banks-->
+										<div style="display:table">
+											<div style="display:table-row">
+												<!--registers-->
+												<div style="display:table-cell;">
+													<p id="lblRegs" style="padding: 12px 12px 0px;white-space:nowrap;margin:0px;"></p>
+												</div>
+												<!--banks-->
+												<div style="display:table-cell;">
+													<p id="lblBanks" style="padding: 12px 12px 0px;white-space:nowrap;margin:0px;"></p>
+												</div>
+											</div>
 										</div>
-										<div style="display:table-cell;vertical-align:top;">
-											<p id="lblBanks" style="padding: 0px 12px 0px;white-space:nowrap;"></p>
+									</div>
+									<!--flags-->
+									<div style="display:table-row;">
+										<div style="display:table-cell;">
+											<p id="lblFlags" style="padding: 18px 12px 0px;white-space:nowrap;margin:0px;"></p>
 										</div>
 									</div>
 								</div>

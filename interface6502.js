@@ -209,16 +209,18 @@ function OnMessage(e)
 				'<br><span style="background-color:#FF00FF;">CA: '
 			if (e.data.CalcAddress==-1) outstr+='(none)</span>';
 			else outstr+="0".repeat(4-e.data.CalcAddress.toString(16).length)+
-				e.data.CalcAddress.toString(16).toUpperCase()+'</span>'
-			outstr+="<br><br>";
-			if (e.data.FlagC) outstr+='C ';else outstr+='c ';
-			if (e.data.FlagZ) outstr+='Z ';else outstr+='z ';
-			if (e.data.FlagI) outstr+='I ';else outstr+='i ';
-			if (e.data.FlagD) outstr+='D ';else outstr+='d ';
-			if (e.data.FlagB) outstr+='B ';else outstr+='b ';
-			if (e.data.FlagV) outstr+='V ';else outstr+='v ';
-			if (e.data.FlagN) outstr+='N';else outstr+='n';
+				e.data.CalcAddress.toString(16).toUpperCase()+'</span>';
 			document.getElementById("lblRegs").innerHTML=outstr;
+			
+			outstr="";
+			if (e.data.FlagN) outstr+='N ';else outstr+='n ';
+			if (e.data.FlagV) outstr+='V ';else outstr+='v ';
+			if (e.data.FlagB) outstr+='B ';else outstr+='b ';
+			if (e.data.FlagD) outstr+='D ';else outstr+='d ';
+			if (e.data.FlagI) outstr+='I ';else outstr+='i ';
+			if (e.data.FlagZ) outstr+='Z ';else outstr+='z ';
+			if (e.data.FlagC) outstr+='C';else outstr+='c';
+			document.getElementById("lblFlags").innerHTML=outstr;
 			
 			outstr="";
 			for (let i=1;i<5;i++)
