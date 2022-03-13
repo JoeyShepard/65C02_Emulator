@@ -130,8 +130,9 @@
 					
 					<!--system information: registers, memory, source-->
 					<div hidden id="tableSystem" style="display:table;border-collapse: collapse;margin-bottom:12px;">
-						<!--top row-->
+						<!--top row: registers, Zerp Page, Stack-->
 						<div style="display:table-row;">
+							<!--upper left block: registers, banks, flags-->
 							<div class="system_block">
 								<br>
 								<!--cycle count-->
@@ -141,29 +142,16 @@
 								<!-- Fails in Chrome!
 								<button onclick="w.postMessage({cmd:'memory dump'});" style="padding 0px 12px 0px;">Dump memory</button>
 								-->
-								<div style="display:table">
-									<div style="display:table-row">
-										<!--top row: registers and banks-->
-										<div style="display:table">
-											<div style="display:table-row">
-												<!--registers-->
-												<div style="display:table-cell;">
-													<p id="lblRegs" style="padding: 12px 12px 0px;white-space:nowrap;margin:0px;"></p>
-												</div>
-												<!--banks-->
-												<div style="display:table-cell;">
-													<p id="lblBanks" style="padding: 12px 12px 0px;white-space:nowrap;margin:0px;"></p>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--flags-->
-									<div style="display:table-row;">
-										<div style="display:table-cell;">
-											<p id="lblFlags" style="padding: 18px 12px 0px;white-space:nowrap;margin:0px;"></p>
-										</div>
-									</div>
+								
+								<!--top row: registers and banks-->								
+								<div style="display:flex;justify-content:space-between;">
+									<!--registers-->
+									<p id="lblRegs" style="padding:12px 12px 0px;margin:0px;white-space:nowrap;"></p>						
+									<!--banks-->
+									<p id="lblBanks" style="padding:12px 12px 0px;margin:0px;white-space:nowrap;"></p>
 								</div>
+								<!--flags-->
+								<p id="lblFlags" style="padding: 18px 12px 0px;white-space:nowrap;margin:0px;"></p>
 							</div>
 							<div class="system_block">
 								<center><b>Zero page</b></center>
