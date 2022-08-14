@@ -1008,7 +1008,7 @@ function setup(hexPath,listing_type)
 	//Worker
 	w = new Worker(base_path+"emu6502.js");
 	w.addEventListener('message', OnMessage, false);
-	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type,NMOS_mode:NMOS_mode});
+	w.postMessage({cmd:'setup',path:hexPath,listing_type:listing_type,NMOS_mode:NMOS_mode,halt_on_BRK:halt_on_BRK});
 	
 	//Interface
 	lbl_legend.innerHTML=legend_caption;

@@ -53,7 +53,9 @@ const LOG_ON =			0xFFEC; //Turn instruction logging on
 const LOG_OFF = 		0xFFED; //Turn instruction logging off
 const LOG_SEND =		0xFFEE; //Send instruction log file
 const BELL_SOUND =		0xFFEF; //Play bell sound on printing character 7
-const FILE_INPUT =		0xFFF0; //Play bell sound on printing character 7
+const FILE_INPUT =		0xFFF0; //Fetch bytes from file input
+//const NODE_EXIT =		0xFFF1; //Used in node.js version to exit emulation
+const HALT_PROGRAM = 	0xFFF2; //Halt program on write
 
 //Commands for DEBUG_TIMING peripheral
 const TIMING_INSTR_BEGIN =	1
@@ -203,7 +205,7 @@ function OnMessage(e)
 	switch (e.data.cmd)
 	{
 		case 'setup':
-			setup(e.data.path,e.data.listing_type,e.data.NMOS_mode);
+			setup(e.data.path,e.data.listing_type,e.data.NMOS_mode,e.data.halt_on_BRK);
 			break;
 		case 'debug':
 			if (debugBuffer.length!=0)
@@ -328,7 +330,7 @@ function debugMsg(msg)
 //*SETUP FUNCTION*
 //****************
 
-function setup(path,list_style,NMOS)
+function setup(path,list_style,NMOS,BRK)
 {
 	//Moved above since needed before receive message for setup
 	//self.addEventListener('message', OnMessage , false);
@@ -345,6 +347,7 @@ function setup(path,list_style,NMOS)
 	
 	GraphicsDirty=false;
 	NMOS_mode=NMOS;
+	halt_on_BRK=BRK;
 	
 	//Loading listing and hex files
 	self.postMessage({cmd:"status",msg:"loading listing"});
@@ -868,6 +871,13 @@ function peripheral(data)
 			case BELL_SOUND:
 				self.postMessage({cmd:"bell"});
 				break;
+			case HALT_PROGRAM:
+				if (running==1)
+				{
+					running=0;
+					self.postMessage({cmd:"stopped"});
+				}
+				break;
 		}
 	}
 }
@@ -1253,14 +1263,27 @@ function subTSB(oper)
 
 function opBRK()													//0x00
 {	
-	//FlagB=0;
-	//PC--;
-	PC++;
-	if (running==1)
+	if (halt_on_BRK)
 	{
-		running=0;
-		self.postMessage({cmd:"stopped"});
+		PC++;
+		if (running==1)
+		{
+			running=0;
+			self.postMessage({cmd:"stopped"});
+		}
 	}
+	else
+	{
+		mem[0x100+SP]=(PC+1)>>8;
+		if (SP==0) SP=0xFF;else SP--;
+		mem[0x100+SP]=(PC+1)&0xFF;
+		if (SP==0) SP=0xFF;else SP--;
+		opPHP();
+		cycle_count-=3;	//Counter-act cycle adjustment for PHP
+		FlagI=1;
+		if (!NMOS_mode) FlagD=0;
+		PC=mem[bank(0xFFFE)]+(mem[bank(0xFFFF)]<<8);
+	}		
 	cycle_count+=7;
 }
 function opORA_IX(){subORA(memIX());cycle_count+=6;}				//0x01
@@ -1413,7 +1436,7 @@ function opRTI()													//0x40
 {
 	opPLP();//4 cycles
 	opRTS();//6 cycles
-	PC--;//interrupt pushes PC, not PC-1
+	PC=(PC-1);//interrupt pushes PC, not PC-1
 	cycle_count-=5;//should be +5 overall
 }
 function opEOR_IX(){subEOR(memIX());cycle_count+=6;}				//0x41
