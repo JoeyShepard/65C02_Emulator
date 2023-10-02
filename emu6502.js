@@ -358,7 +358,7 @@ function setup(path,list_style,NMOS,BRK)
 		{
 			//self.postMessage({cmd:"status",msg:"raw lst loaded (" + ((text.length)/1024).toFixed(1) + "k)"});
 			self.postMessage({cmd:"status",msg:"raw listing loaded"});
-			
+						
 			//Old version from Kowalski listing
 			if (list_style=="Kowalski")
 			{	
@@ -537,19 +537,30 @@ function setup(path,list_style,NMOS,BRK)
 			{
 				//Even newer version for Macroassembler AS
 				//Like CA65, does not treat labels separately
-			
+				//NOTE: this is older style listing with spaces between columns
+				//      - leave in place for existing code
+				//      - upgrade to 1.42 Bld 251 removed spaces - see AS-142.251 below
+				
 				let listlines=text.split("\n");
 				let error_msg='';
+				let skip_lines=0;
 				//Skip first 3 rows
 				for (i=3;i<listlines.length;i++)
 				{
+					//Skip 2 lines after line with form feed character
+					if (skip_lines>0)
+					{
+						skip_lines--;
+						continue;
+					}
+					
 					let addline=false;
 					let address=listlines[i].substring(13,17).trim();
 					
 					//First character of line after main listing is 12 (Form feed control character)
 					if (listlines[i].charCodeAt(0)==12)
 					{
-						break;
+						skip_lines=2;
 					}
 					//No address means continued line or output from console, so ignore
 					else if (address.length!=0)	
@@ -597,7 +608,90 @@ function setup(path,list_style,NMOS,BRK)
 					{
 						let line=listlines[i].substring(40).trim();
 						listing.push({address:parseInt("0x"+address),line:line});
-						//self.postMessage({cmd:"msgbox",msg:"$"+address+"$"+line});
+					}
+				}
+			}
+			else if (list_style=="AS-142.251")
+			{
+				//Even newer version for Macroassembler AS
+				//Like CA65, does not treat labels separately
+				//NOTE: AS above had spaces between columns
+				//      - upgrade to 1.42 Bld 251 removed spaces
+				//      - USE THIS GOING FORWARD!
+			
+				let listlines=text.split("\n");
+				let error_msg='';
+				let skip_lines=0;
+				//Skip first 3 rows
+				for (i=3;i<listlines.length;i++)
+				{
+					//Skip 2 lines after line with form feed character
+					if (skip_lines>0)
+					{
+						skip_lines--;
+						continue;
+					}
+					
+					let addline=false;
+					let first_slash=listlines[i].indexOf("/");
+					let first_colon=listlines[i].indexOf(":");
+					let address="";
+					if ((first_slash==0)||(first_colon==0)) address="";
+					else address=listlines[i].substring(first_slash+1,first_colon).trim();
+					
+					//First character of line after main listing is 12 (Form feed control character)
+					if (listlines[i].charCodeAt(0)==12)
+					{
+						skip_lines=2;
+					}
+					//No address means continued line or output from console, so ignore
+					else if (address.length!=0)	
+					{
+						address=("0000"+address).slice(-4);
+						//Valid lines have colon. Check should not be necessary but just in case
+						if (listlines[i][11]==":")
+						{
+							//Check if any bytes were laid down
+							if (((listlines[i][13]>="0")&&(listlines[i][13]<="9"))||((listlines[i][13]>="A")&&(listlines[i][13]<="F")))
+								if (((listlines[i][14]>="0")&&(listlines[i][14]<="9"))||((listlines[i][14]>="A")&&(listlines[i][14]<="F")))
+									if (listlines[i][15]==" ") addline=true;
+							//If no bytes laid down, check for label
+							//(AS supports label without colon if in first column but assume colon here)
+							if (!addline)
+							{
+								let tempstr=listlines[i].substring(44).trim();
+								if (tempstr.indexOf(":")!=-1)
+								{
+									//Cut off at colon
+									tempstr=tempstr.substring(0,tempstr.indexOf(":"));
+									//Remove leading period if exists
+									if (tempstr[0]==".") tempstr=tempstr.substring(1);
+									//Label can't start with a number
+									if ((tempstr[0]<"0")||(tempstr[0]>"9"))
+									{
+										//Must contain only valid characters
+										if (tempstr.match(/^[_a-z0-9]+$/i)) addline=true;
+									}
+								}
+							}						
+						}
+					}
+					
+					//tempmsg=i + listlines[i];
+					//tempmsg+="$"+listlines[i].substring(40);
+					//self.postMessage({cmd:"msgbox",msg:tempmsg});
+					if (error_msg!='')
+					{
+						self.postMessage({cmd:"status",msg:"unable to load listing file!"});
+						self.postMessage({cmd:"error",msg:error_msg});
+						return;
+					}
+					if (addline)
+					{
+						let line=listlines[i].substring(40).trim();
+						//Don't show line with bytes but no text since probably bytes overflowing from line above
+						if (line!="")
+							listing.push({address:parseInt("0x"+address),line:line});
 					}
 				}
 			}
